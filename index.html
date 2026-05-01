@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LUMOS — Student Productivity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ===================== AUTH PAGES ===================== -->
+    <div id="auth-wrapper" class="auth-wrapper hidden">
+      <!-- LOGIN PAGE -->
+      <div id="page-login" class="auth-page">
+        <div class="auth-card">
+          <div class="auth-logo">
+            <div class="logo-mark">
+              <svg
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                  stroke="url(#grad1)"
+                  stroke-width="2.5"
+                  fill="none"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                  stroke="url(#grad2)"
+                  stroke-width="1"
+                  fill="none"
+                  stroke-linejoin="round"
+                  transform="scale(0.65) translate(16.5 16.5)"
+                />
+                <defs>
+                  <linearGradient
+                    id="grad1"
+                    x1="4"
+                    y1="4"
+                    x2="56"
+                    y2="52"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#1a1472" />
+                    <stop offset="0.5" stop-color="#6b5ce7" />
+                    <stop offset="1" stop-color="#d4a843" />
+                  </linearGradient>
+                  <linearGradient
+                    id="grad2"
+                    x1="4"
+                    y1="4"
+                    x2="56"
+                    y2="52"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#d4a843" />
+                    <stop offset="1" stop-color="#1a1472" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <span class="logo-text">LUMOS</span>
+          </div>
+          <h2 class="auth-title" data-i18n="loginTitle">Welcome back</h2>
+          <p class="auth-sub" data-i18n="loginSub">Sign in to your workspace</p>
+
+          <div id="login-error" class="auth-error hidden"></div>
+
+          <div class="field-group">
+            <label data-i18n="labelIdentifier">Username or Email</label>
+            <input
+              type="text"
+              id="login-identifier"
+              placeholder="jonhripper007@email.com"
+              autocomplete="username"
+            />
+          </div>
+          <div class="field-group">
+            <label data-i18n="labelPassword">Password</label>
+            <input
+              type="password"
+              id="login-password"
+              placeholder="Enter your password here"
+              autocomplete="current-password"
+            />
+          </div>
+          <button class="btn-primary" id="btn-login" data-i18n="btnLogin">
+            Sign In
+          </button>
+          <p class="auth-switch" data-i18n="noAccount">
+            Don't have an account? <a href="#" id="go-register">Register</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- REGISTER PAGE -->
+      <div id="page-register" class="auth-page hidden">
+        <div class="auth-card">
+          <div class="auth-logo">
+            <div class="logo-mark">
+              <svg
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                  stroke="url(#grad3)"
+                  stroke-width="2.5"
+                  fill="none"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                  stroke="url(#grad4)"
+                  stroke-width="1"
+                  fill="none"
+                  stroke-linejoin="round"
+                  transform="scale(0.65) translate(16.5 16.5)"
+                />
+                <defs>
+                  <linearGradient
+                    id="grad3"
+                    x1="4"
+                    y1="4"
+                    x2="56"
+                    y2="52"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#1a1472" />
+                    <stop offset="0.5" stop-color="#6b5ce7" />
+                    <stop offset="1" stop-color="#d4a843" />
+                  </linearGradient>
+                  <linearGradient
+                    id="grad4"
+                    x1="4"
+                    y1="4"
+                    x2="56"
+                    y2="52"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#d4a843" />
+                    <stop offset="1" stop-color="#1a1472" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <span class="logo-text">LUMOS</span>
+          </div>
+          <h2 class="auth-title" data-i18n="registerTitle">Create account</h2>
+          <p class="auth-sub" data-i18n="registerSub">
+            Start your learning journey
+          </p>
+
+          <div id="register-error" class="auth-error hidden"></div>
+
+          <div class="field-group">
+            <label data-i18n="labelUsername">Username</label>
+            <input type="text" id="reg-username" placeholder="Bejo123" />
+          </div>
+          <div class="field-group">
+            <label data-i18n="labelEmail">Email</label>
+            <input
+              type="email"
+              id="reg-email"
+              placeholder="bejo123@email.com"
+            />
+          </div>
+          <div class="field-group">
+            <label data-i18n="labelPassword">Password</label>
+            <input
+              type="password"
+              id="reg-password"
+              placeholder="Enter your password here"
+            />
+          </div>
+          <div class="field-group">
+            <label data-i18n="labelConfirm">Confirm Password</label>
+            <input
+              type="password"
+              id="reg-confirm"
+              placeholder="Enter your password again"
+            />
+          </div>
+          <button class="btn-primary" id="btn-register" data-i18n="btnRegister">
+            Create Account
+          </button>
+          <p class="auth-switch" data-i18n="hasAccount">
+            Already have an account? <a href="#" id="go-login">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== MAIN APP ===================== -->
+    <div id="app-wrapper" class="app-wrapper hidden">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-mark small">
+            <svg
+              viewBox="0 0 60 60"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                stroke="url(#gs1)"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                stroke="url(#gs2)"
+                stroke-width="1"
+                fill="none"
+                stroke-linejoin="round"
+                transform="scale(0.65) translate(16.5 16.5)"
+              />
+              <defs>
+                <linearGradient
+                  id="gs1"
+                  x1="4"
+                  y1="4"
+                  x2="56"
+                  y2="52"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stop-color="#fff" stop-opacity="0.9" />
+                  <stop offset="1" stop-color="#d4a843" />
+                </linearGradient>
+                <linearGradient
+                  id="gs2"
+                  x1="4"
+                  y1="4"
+                  x2="56"
+                  y2="52"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stop-color="#d4a843" />
+                  <stop offset="1" stop-color="#fff" stop-opacity="0.6" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="logo-text">LUMOS</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item active" data-page="dashboard">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span data-i18n="navDashboard">Dashboard</span>
+          </a>
+          <a href="#" class="nav-item" data-page="tasks">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+            </svg>
+            <span data-i18n="navTasks">Tasks</span>
+          </a>
+          <a href="#" class="nav-item" data-page="schedule">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <span data-i18n="navSchedule">Schedule</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <!-- Theme Toggle -->
+          <button
+            class="sidebar-util-btn"
+            id="theme-toggle"
+            title="Toggle theme"
+          >
+            <svg
+              id="icon-moon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <svg
+              id="icon-sun"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="hidden"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <span data-i18n="toggleTheme">Theme</span>
+          </button>
+          <!-- Language Toggle -->
+          <button
+            class="sidebar-util-btn"
+            id="lang-toggle"
+            title="Toggle language"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path
+                d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"
+              />
+            </svg>
+            <span id="lang-label">ID</span>
+          </button>
+          <!-- Logout -->
+          <button class="sidebar-util-btn danger" id="btn-logout">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span data-i18n="btnLogout">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MOBILE TOPBAR -->
+      <header class="mobile-topbar">
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <div class="mobile-logo">
+          <div class="logo-mark xsmall">
+            <svg
+              viewBox="0 0 60 60"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M30 4L36.5 22.5H56L40.5 33.5L47 52L30 41L13 52L19.5 33.5L4 22.5H23.5L30 4Z"
+                stroke="url(#gm1)"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linejoin="round"
+              />
+              <defs>
+                <linearGradient
+                  id="gm1"
+                  x1="4"
+                  y1="4"
+                  x2="56"
+                  y2="52"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stop-color="#1a1472" />
+                  <stop offset="1" stop-color="#d4a843" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="logo-text dark">LUMOS</span>
+        </div>
+        <div class="mobile-actions">
+          <button class="icon-btn" id="mobile-theme-toggle">
+            <svg
+              id="mobile-icon-moon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <svg
+              id="mobile-icon-sun"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="hidden"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content" id="main-content">
+        <!-- ---- DASHBOARD PAGE ---- -->
+        <div id="page-dashboard" class="page active">
+          <div class="page-header">
+            <div>
+              <h1 class="greeting" id="greeting-text">Halo, User!</h1>
+              <p class="greeting-sub" data-i18n="greetingSub">
+                Here's your study overview for today.
+              </p>
+            </div>
+            <div class="date-badge" id="date-badge"></div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon total">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label" data-i18n="statTotal">Total Tasks</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon done">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-done">0</div>
+                <div class="stat-label" data-i18n="statDone">Completed</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon pending">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div>
+                <div class="stat-value" id="stat-pending">0</div>
+                <div class="stat-label" data-i18n="statPending">Pending</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div class="progress-section">
+            <div class="progress-header">
+              <span data-i18n="progressLabel">Overall Progress</span>
+              <span id="progress-pct" class="progress-pct">0%</span>
+            </div>
+            <div class="progress-track">
+              <div
+                class="progress-fill"
+                id="progress-fill"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Upcoming Deadlines with countdown -->
+          <div class="section-header">
+            <h3 data-i18n="upcomingDeadlines">Upcoming Deadlines</h3>
+          </div>
+          <div id="countdown-list" class="countdown-list">
+            <p class="empty-state" data-i18n="noTasks">
+              No tasks yet. Add one in Tasks!
+            </p>
+          </div>
+        </div>
+
+        <!-- ---- TASKS PAGE ---- -->
+        <div id="page-tasks" class="page">
+          <div class="page-header">
+            <h1 data-i18n="navTasks">Tasks</h1>
+          </div>
+
+          <!-- Add Task Form -->
+          <div class="card form-card">
+            <h3 data-i18n="addTask">Add New Task</h3>
+            <div class="form-grid">
+              <div class="field-group">
+                <label data-i18n="taskTitle">Title</label>
+                <input
+                  type="text"
+                  id="task-title"
+                  data-i18n-placeholder="taskTitlePlaceholder"
+                  placeholder="e.g. Math Assignment"
+                />
+              </div>
+              <div class="field-group">
+                <label data-i18n="taskSubject">Subject</label>
+                <input
+                  type="text"
+                  id="task-subject"
+                  data-i18n-placeholder="taskSubjectPlaceholder"
+                  placeholder="e.g. Mathematics"
+                />
+              </div>
+              <div class="field-group">
+                <label data-i18n="taskDeadline">Deadline</label>
+                <input type="datetime-local" id="task-deadline" />
+              </div>
+            </div>
+            <button
+              class="btn-primary"
+              id="btn-add-task"
+              data-i18n="btnAddTask"
+            >
+              Add Task
+            </button>
+          </div>
+
+          <!-- Task List -->
+          <div id="task-list" class="task-list">
+            <!-- tasks rendered here -->
+          </div>
+        </div>
+
+        <!-- ---- SCHEDULE PAGE ---- -->
+        <div id="page-schedule" class="page">
+          <div class="page-header">
+            <h1 data-i18n="navSchedule">Schedule</h1>
+            <div class="schedule-mode-toggle">
+              <button
+                class="pill-btn active"
+                id="sched-5"
+                data-mode="5"
+                data-i18n="monFri"
+              >
+                Mon–Fri
+              </button>
+              <button
+                class="pill-btn"
+                id="sched-6"
+                data-mode="6"
+                data-i18n="monSat"
+              >
+                Mon–Sat
+              </button>
+            </div>
+          </div>
+
+          <!-- Add Activity Form -->
+          <div class="card form-card">
+            <h3 data-i18n="addActivity">Add Activity</h3>
+            <div class="form-grid four-col">
+              <div class="field-group">
+                <label data-i18n="activityDay">Day</label>
+                <select id="activity-day"></select>
+              </div>
+              <div class="field-group">
+                <label data-i18n="activityName">Activity</label>
+                <input
+                  type="text"
+                  id="activity-name"
+                  data-i18n-placeholder="activityPlaceholder"
+                  placeholder="e.g. Physics Class"
+                />
+              </div>
+              <div class="field-group">
+                <label data-i18n="activityStart">Start</label>
+                <input type="time" id="activity-start" value="08:00" />
+              </div>
+              <div class="field-group">
+                <label data-i18n="activityEnd">End</label>
+                <input type="time" id="activity-end" value="10:00" />
+              </div>
+            </div>
+            <button
+              class="btn-primary"
+              id="btn-add-activity"
+              data-i18n="btnAddActivity"
+            >
+              Add Activity
+            </button>
+          </div>
+
+          <!-- Schedule Grid -->
+          <div id="schedule-grid" class="schedule-grid"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- MOBILE SIDEBAR OVERLAY -->
+    <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
