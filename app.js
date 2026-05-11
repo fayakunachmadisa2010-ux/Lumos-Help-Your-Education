@@ -1,21 +1,3 @@
-/* =====================================================
-   LUMOS — app.js
-   Student Productivity Web App
-   
-   Structure:
-   1. i18n (translations)
-   2. Auth (register, login, logout)
-   3. Navigation / page routing
-   4. Dashboard (stats, progress, countdown)
-   5. Tasks (add, delete, complete)
-   6. Schedule (add, delete, render)
-   7. Theme & Language toggles
-   8. Init
-   ===================================================== */
-
-/* =====================================================
-   1. TRANSLATIONS (i18n)
-   ===================================================== */
 const translations = {
   en: {
     loginTitle: "Welcome back",
@@ -34,8 +16,32 @@ const translations = {
     navDashboard: "Dashboard",
     navTasks: "Tasks",
     navSchedule: "Schedule",
+    navSummarize: "Summarize",
+    navQuiz: "Quiz",
     btnLogout: "Logout",
     toggleTheme: "Theme",
+    aiBannerText: "Powered by Gemini AI — running via secure backend",
+    outputLangLabel: "Output Language",
+    summarizeTextTitle: "Text to Summarize",
+    summarizeInputPlaceholder: "Paste your notes or text here...",
+    btnSummarize: "Summarize Text",
+    summarizeResultTitle: "Summary",
+    loadingText: "Generating summary...",
+    btnCopy: "Copy",
+    btnCopied: "Copied!",
+    navQuizLabel: "Quiz",
+    quizInputTitle: "Text for Quiz",
+    quizInputPlaceholder: "Paste your study material here...",
+    quizCountLabel: "Questions",
+    btnGenerateQuiz: "Generate Quiz",
+    quizResultTitle: "Quiz",
+    loadingQuizText: "Generating quiz questions...",
+    btnSubmitQuiz: "Submit Quiz",
+    quizScoreTitle: "Your Score",
+    btnReviewQuiz: "Review Answers",
+    btnRetryQuiz: "Try Again",
+    errNoText: "Please enter some text first.",
+    errServerError: "Server error. Make sure the backend is running.",
     greetingSub: "Here's your study overview for today.",
     statTotal: "Total Tasks",
     statDone: "Completed",
@@ -95,8 +101,32 @@ const translations = {
     navDashboard: "Dashboard",
     navTasks: "Tugas",
     navSchedule: "Jadwal",
+    navSummarize: "Rangkum",
+    navQuiz: "Kuis",
     btnLogout: "Keluar",
     toggleTheme: "Tema",
+    aiBannerText: "Didukung oleh Gemini AI — berjalan via backend aman",
+    outputLangLabel: "Bahasa Output",
+    summarizeTextTitle: "Teks yang Ingin Dirangkum",
+    summarizeInputPlaceholder: "Tempel catatan atau teks kamu di sini...",
+    btnSummarize: "Rangkum Teks",
+    summarizeResultTitle: "Hasil Rangkuman",
+    loadingText: "Sedang membuat rangkuman...",
+    btnCopy: "Salin",
+    btnCopied: "Tersalin!",
+    navQuizLabel: "Kuis",
+    quizInputTitle: "Teks untuk Kuis",
+    quizInputPlaceholder: "Tempel materi belajar kamu di sini...",
+    quizCountLabel: "Jumlah Soal",
+    btnGenerateQuiz: "Buat Kuis",
+    quizResultTitle: "Kuis",
+    loadingQuizText: "Sedang membuat soal kuis...",
+    btnSubmitQuiz: "Kumpulkan Kuis",
+    quizScoreTitle: "Nilai Kamu",
+    btnReviewQuiz: "Lihat Jawaban",
+    btnRetryQuiz: "Coba Lagi",
+    errNoText: "Mohon masukkan teks terlebih dahulu.",
+    errServerError: "Error server. Pastikan backend sudah berjalan.",
     greetingSub: "Ini ringkasan belajar kamu hari ini.",
     statTotal: "Total Tugas",
     statDone: "Selesai",
@@ -767,6 +797,224 @@ function toggleLanguage() {
 
 
 /* =====================================================
+   SUMMARIZE (via Backend)
+   ===================================================== */
+const BACKEND_URL = 'http://localhost:3001';
+
+async function handleSummarize() {
+  const text = document.getElementById('summarize-input').value.trim();
+  const lang = document.getElementById('summarize-lang').value;
+
+  if (!text || text.length < 20) {
+    return alert(t('errNoText'));
+  }
+
+  const btn     = document.getElementById('btn-summarize');
+  const loading = document.getElementById('summarize-loading');
+  const result  = document.getElementById('summarize-result-container');
+
+  btn.disabled = true;
+  loading.classList.remove('hidden');
+  result.classList.add('hidden');
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/summarize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, lang }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Server error');
+
+    const html = markdownToHtml(data.summary);
+    document.getElementById('summarize-result-content').innerHTML = html;
+    result.classList.remove('hidden');
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    alert(err.message.includes('fetch') ? t('errServerError') : err.message);
+  } finally {
+    btn.disabled = false;
+    loading.classList.add('hidden');
+  }
+}
+
+/* ---- Simple markdown → HTML renderer ---- */
+function markdownToHtml(md) {
+  return md
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.+)$/gm, '<h4>$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/^(?!<[hul])/gm, '')
+    .replace(/(<p><\/p>)/g, '')
+    .split('\n').map(line =>
+      line.startsWith('<h') || line.startsWith('<ul') || line.startsWith('<li')
+        ? line
+        : `<p>${line}</p>`
+    ).join('')
+    .replace(/<p><\/p>/g, '');
+}
+
+/* =====================================================
+   QUIZ (via Backend)
+   ===================================================== */
+let currentQuestions = [];
+let userAnswers = {};
+
+async function handleGenerateQuiz() {
+  const text  = document.getElementById('quiz-input').value.trim();
+  const lang  = document.getElementById('quiz-lang').value;
+  const count = document.getElementById('quiz-count').value;
+
+  if (!text || text.length < 50) return alert(t('errNoText'));
+
+  const btn      = document.getElementById('btn-generate-quiz');
+  const loading  = document.getElementById('quiz-loading');
+  const container = document.getElementById('quiz-container');
+  const scoreBox = document.getElementById('quiz-score-container');
+
+  btn.disabled = true;
+  loading.classList.remove('hidden');
+  container.classList.add('hidden');
+  scoreBox.classList.add('hidden');
+  userAnswers = {};
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/quiz`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, lang, count }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Server error');
+
+    currentQuestions = data.questions;
+    renderQuizQuestions(currentQuestions);
+    container.classList.remove('hidden');
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    alert(err.message.includes('fetch') ? t('errServerError') : err.message);
+  } finally {
+    btn.disabled = false;
+    loading.classList.add('hidden');
+  }
+}
+
+function renderQuizQuestions(questions) {
+  const list = document.getElementById('quiz-questions-list');
+  document.getElementById('quiz-progress-text').textContent =
+    `${questions.length} ${getLang() === 'id' ? 'soal' : 'questions'}`;
+
+  list.innerHTML = questions.map((q, idx) => `
+    <div class="quiz-card" id="qcard-${idx}">
+      <div class="quiz-qnum">${idx + 1} / ${questions.length}</div>
+      <div class="quiz-question">${escapeHtml(q.question)}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, oIdx) => {
+          const letter = ['A','B','C','D'][oIdx];
+          return `
+            <label class="quiz-option" id="qopt-${idx}-${letter}">
+              <input type="radio" name="q${idx}" value="${letter}"
+                onchange="recordAnswer(${idx}, '${letter}')">
+              <span class="option-letter">${letter}</span>
+              <span class="option-text">${escapeHtml(opt.replace(/^[A-D]\. ?/, ''))}</span>
+            </label>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function recordAnswer(qIdx, letter) {
+  userAnswers[qIdx] = letter;
+  // Highlight selected
+  ['A','B','C','D'].forEach(l => {
+    document.getElementById(`qopt-${qIdx}-${l}`)?.classList.remove('selected');
+  });
+  document.getElementById(`qopt-${qIdx}-${letter}`)?.classList.add('selected');
+}
+
+function handleSubmitQuiz() {
+  const total = currentQuestions.length;
+  let correct = 0;
+
+  currentQuestions.forEach((q, idx) => {
+    const ua = userAnswers[idx];
+    const ca = q.answer.toUpperCase();
+    if (ua === ca) correct++;
+  });
+
+  const pct = Math.round((correct / total) * 100);
+  const isID = getLang() === 'id';
+
+  document.getElementById('quiz-container').classList.add('hidden');
+  const scoreBox = document.getElementById('quiz-score-container');
+  scoreBox.classList.remove('hidden');
+  scoreBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  document.getElementById('score-number').textContent = pct + '%';
+  document.getElementById('score-detail').textContent = isID
+    ? `${correct} dari ${total} soal benar`
+    : `${correct} out of ${total} correct`;
+
+  const emoji = pct >= 80 ? '🎉 ' + (isID ? 'Luar biasa!' : 'Excellent!')
+              : pct >= 60 ? '👍 ' + (isID ? 'Bagus!' : 'Good job!')
+              : '💪 ' + (isID ? 'Terus semangat!' : 'Keep practicing!');
+  document.getElementById('score-emoji').textContent = emoji;
+
+  // Animate ring
+  const circumference = 326.7;
+  const offset = circumference - (pct / 100) * circumference;
+  const ring = document.getElementById('score-ring');
+  ring.style.transition = 'stroke-dashoffset 1s ease';
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = pct >= 80 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
+
+  document.getElementById('quiz-review-container').classList.add('hidden');
+}
+
+function handleReviewQuiz() {
+  const reviewEl = document.getElementById('quiz-review-container');
+  if (!reviewEl.classList.contains('hidden')) {
+    reviewEl.classList.add('hidden');
+    return;
+  }
+
+  const isID = getLang() === 'id';
+  reviewEl.innerHTML = currentQuestions.map((q, idx) => {
+    const ua = userAnswers[idx];
+    const ca = q.answer.toUpperCase();
+    const isCorrect = ua === ca;
+    return `
+      <div class="review-card ${isCorrect ? 'correct' : 'wrong'}">
+        <div class="review-qnum">${idx + 1}. ${escapeHtml(q.question)}</div>
+        <div class="review-answers">
+          <span class="review-yours">
+            ${isID ? 'Jawabanmu' : 'Your answer'}: <strong>${ua || (isID ? 'Tidak dijawab' : 'Not answered')}</strong>
+          </span>
+          <span class="review-correct">
+            ${isID ? 'Jawaban benar' : 'Correct answer'}: <strong>${ca}</strong>
+          </span>
+        </div>
+        <div class="review-explanation">${escapeHtml(q.explanation || '')}</div>
+      </div>`;
+  }).join('');
+  reviewEl.classList.remove('hidden');
+}
+
+function handleRetryQuiz() {
+  userAnswers = {};
+  document.getElementById('quiz-score-container').classList.add('hidden');
+  document.getElementById('quiz-review-container').classList.add('hidden');
+  renderQuizQuestions(currentQuestions);
+  document.getElementById('quiz-container').classList.remove('hidden');
+  document.getElementById('quiz-container').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* =====================================================
    MOBILE SIDEBAR
    ===================================================== */
 function openMobileSidebar() {
@@ -908,4 +1156,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Populate day select on load
   populateDaySelect();
+
+  // --- Summarize ---
+  document.getElementById('btn-summarize').addEventListener('click', handleSummarize);
+  document.getElementById('btn-copy-summary').addEventListener('click', () => {
+    const content = document.getElementById('summarize-result-content').innerText;
+    navigator.clipboard.writeText(content).then(() => {
+      const btn = document.getElementById('btn-copy-summary');
+      btn.textContent = t('btnCopied');
+      setTimeout(() => btn.textContent = t('btnCopy'), 2000);
+    });
+  });
+
+  // --- Quiz ---
+  document.getElementById('btn-generate-quiz').addEventListener('click', handleGenerateQuiz);
+  document.getElementById('btn-submit-quiz').addEventListener('click', handleSubmitQuiz);
+  document.getElementById('btn-review-quiz').addEventListener('click', handleReviewQuiz);
+  document.getElementById('btn-retry-quiz').addEventListener('click', handleRetryQuiz);
+
+  // Sync AI lang selects with app language on start
+  const initLang = getLang();
+  const sumLang = document.getElementById('summarize-lang');
+  const qzLang  = document.getElementById('quiz-lang');
+  if (sumLang) sumLang.value = initLang;
+  if (qzLang)  qzLang.value  = initLang;
 });

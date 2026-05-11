@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- ===================== AUTH PAGES ===================== -->
+      <!-- Halaman Auth -->
     <div id="auth-wrapper" class="auth-wrapper hidden">
-      <!-- LOGIN PAGE -->
+      <!-- Halaman Login -->
       <div id="page-login" class="auth-page">
         <div class="auth-card">
           <div class="auth-logo">
@@ -294,6 +294,34 @@
               <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
             <span data-i18n="navSchedule">Schedule</span>
+          </a>
+          <a href="#" class="nav-item" data-page="summarize">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span data-i18n="navSummarize">Summarize</span>
+          </a>
+          <a href="#" class="nav-item" data-page="quiz">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span data-i18n="navQuiz">Quiz</span>
           </a>
         </nav>
 
@@ -648,6 +676,149 @@
 
           <!-- Schedule Grid -->
           <div id="schedule-grid" class="schedule-grid"></div>
+        </div>
+
+        <!-- ---- SUMMARIZE PAGE ---- -->
+        <div id="page-summarize" class="page">
+          <div class="page-header">
+            <h1 data-i18n="navSummarize">Summarize</h1>
+          </div>
+
+          <!-- Summarize Content -->
+          <div class="card form-card">
+            <div class="form-card-header">
+              <h3 data-i18n="summarizeTextTitle">Text to Summarize</h3>
+              <div class="ai-lang-select-wrap">
+                <label data-i18n="outputLangLabel">Output Language</label>
+                <select id="summarize-lang" class="ai-lang-select">
+                  <option value="id">🇮🇩 Bahasa Indonesia</option>
+                  <option value="en">🇬🇧 English</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <textarea
+                id="summarize-input"
+                data-i18n-placeholder="summarizeInputPlaceholder"
+                placeholder="Paste your notes or text here..."
+                class="summary-textarea"
+              ></textarea>
+            </div>
+            <button
+              class="btn-primary btn-ai"
+              id="btn-summarize"
+              data-i18n="btnSummarize"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Summarize Text
+            </button>
+          </div>
+
+          <!-- Loading -->
+          <div id="summarize-loading" class="ai-loading hidden">
+            <div class="ai-spinner"></div>
+            <span data-i18n="loadingText">Generating summary...</span>
+          </div>
+
+          <!-- Result -->
+          <div id="summarize-result-container" class="card hidden">
+            <div class="result-header">
+              <h3 data-i18n="summarizeResultTitle">Summary</h3>
+              <button class="copy-btn" id="btn-copy-summary" data-i18n="btnCopy">Copy</button>
+            </div>
+            <div id="summarize-result-content" class="summary-result-content"></div>
+          </div>
+        </div>
+
+        <!-- ---- QUIZ PAGE ---- -->
+        <div id="page-quiz" class="page">
+          <div class="page-header">
+            <h1 data-i18n="navQuiz">Generate Quiz</h1>
+          </div>
+
+          <!-- Quiz Config -->
+          <div class="card form-card">
+            <div class="form-card-header">
+              <h3 data-i18n="quizInputTitle">Text for Quiz</h3>
+              <div class="ai-controls-row">
+                <div class="ai-lang-select-wrap">
+                  <label data-i18n="outputLangLabel">Output Language</label>
+                  <select id="quiz-lang" class="ai-lang-select">
+                    <option value="id">🇮🇩 Bahasa Indonesia</option>
+                    <option value="en">🇬🇧 English</option>
+                  </select>
+                </div>
+                <div class="ai-lang-select-wrap">
+                  <label data-i18n="quizCountLabel">Questions</label>
+                  <select id="quiz-count" class="ai-lang-select">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field-group">
+              <textarea
+                id="quiz-input"
+                data-i18n-placeholder="quizInputPlaceholder"
+                placeholder="Paste your study material here..."
+                class="summary-textarea"
+              ></textarea>
+            </div>
+            <button
+              class="btn-primary btn-ai"
+              id="btn-generate-quiz"
+              data-i18n="btnGenerateQuiz"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Generate Quiz
+            </button>
+          </div>
+
+          <!-- Loading -->
+          <div id="quiz-loading" class="ai-loading hidden">
+            <div class="ai-spinner"></div>
+            <span data-i18n="loadingQuizText">Generating quiz questions...</span>
+          </div>
+
+          <!-- Quiz Questions -->
+          <div id="quiz-container" class="hidden">
+            <div class="quiz-header">
+              <h3 data-i18n="quizResultTitle">Quiz</h3>
+              <div class="quiz-meta">
+                <span id="quiz-progress-text"></span>
+              </div>
+            </div>
+            <div id="quiz-questions-list"></div>
+            <div class="quiz-footer">
+              <button class="btn-primary btn-quiz-submit" id="btn-submit-quiz" data-i18n="btnSubmitQuiz">Submit Quiz</button>
+            </div>
+          </div>
+
+          <!-- Score Result -->
+          <div id="quiz-score-container" class="hidden">
+            <div class="score-card">
+              <div class="score-circle">
+                <svg viewBox="0 0 120 120">
+                  <circle class="score-ring-bg" cx="60" cy="60" r="52" fill="none" stroke-width="10"/>
+                  <circle class="score-ring-fill" id="score-ring" cx="60" cy="60" r="52" fill="none" stroke-width="10"
+                    stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round"
+                    transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="score-number" id="score-number">0%</div>
+              </div>
+              <div class="score-info">
+                <h3 class="score-title" data-i18n="quizScoreTitle">Your Score</h3>
+                <p class="score-detail" id="score-detail"></p>
+                <p class="score-emoji" id="score-emoji"></p>
+              </div>
+            </div>
+            <button class="btn-secondary" id="btn-review-quiz" data-i18n="btnReviewQuiz">Review Answers</button>
+            <button class="btn-primary btn-ai" id="btn-retry-quiz" data-i18n="btnRetryQuiz">Try Again</button>
+            <!-- Answer Review -->
+            <div id="quiz-review-container" class="hidden"></div>
+          </div>
         </div>
       </main>
     </div>
