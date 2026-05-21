@@ -868,7 +868,7 @@ async function handleSummarize() {
   result.classList.add("hidden");
 
   try {
-    const res = await fetch(`https://lumos-6d1g.vercel.app/api/summarize`, {
+    const res = await fetch("https://lumos-6d1g.vercel.app/api/summarize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, lang }),
@@ -935,7 +935,7 @@ async function handleGenerateQuiz() {
   userAnswers = {};
 
   try {
-    const res = await fetch(`https://lumos-6d1g.vercel.app/api/quiz`, {
+    const res = await fetch("https://lumos-6d1g.vercel.app/api/quiz", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, lang, count }),
