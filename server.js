@@ -6,38 +6,46 @@
    - POST /api/quiz       { text, lang, count } → { questions }
    ===================================================== */
 
-require('dotenv').config();
-const express = require('express');
-const cors    = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const app  = express();
+const app = express();
 const PORT = process.env.PORT || 3001;
 
 /* ---- Middleware ---- */
 // Allow all origins for local development (frontend opened via file:// or any localhost port)
-app.use(cors({
-  origin: true, // reflect the request origin — allows file://, localhost:*, etc.
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  credentials: false,
-}));
-app.options('*', cors()); // handle preflight
-app.use(express.json({ limit: '2mb' }));
+app.use(
+  cors({
+    origin: true, // reflect the request origin — allows file://, localhost:*, etc.
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+    credentials: false,
+  }),
+);
+app.options("*", cors()); // handle preflight
+app.use(express.json({ limit: "2mb" }));
 
 /* ---- Gemini Client ---- */
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 /* ---- Health check ---- */
-app.get('/api/health', (req, res) => {
-  const hasKey = !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here');
-  res.json({ status: 'ok', keyConfigured: hasKey });
+app.get("/api/health", (req, res) => {
+  const hasKey = !!(
+    process.env.GEMINI_API_KEY &&
+    process.env.GEMINI_API_KEY !== "your_gemini_api_key_here"
+  );
+  res.json({ status: "ok", keyConfigured: hasKey });
 });
 
 /* ---- Root route (friendly info page) ---- */
-app.get('/', (req, res) => {
-  const hasKey = !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here');
+app.get("/", (req, res) => {
+  const hasKey = !!(
+    process.env.GEMINI_API_KEY &&
+    process.env.GEMINI_API_KEY !== "your_gemini_api_key_here"
+  );
   res.send(`
     <!DOCTYPE html>
     <html lang="id">
@@ -56,7 +64,7 @@ app.get('/', (req, res) => {
     <body>
       <h1>🌟 LUMOS Backend</h1>
       <p>Server berjalan dengan baik di port <strong>${PORT}</strong>.</p>
-      <p>API Key: <span class="${hasKey ? 'ok' : 'warn'}">${hasKey ? '✅ Terkonfigurasi' : '⚠️ Belum diisi di .env'}</span></p>
+      <p>API Key: <span class="${hasKey ? "ok" : "warn"}">${hasKey ? "✅ Terkonfigurasi" : "⚠️ Belum diisi di .env"}</span></p>
       <h3>Endpoints tersedia:</h3>
       <ul>
         <li><code>POST /api/summarize</code> — Rangkum teks</li>
@@ -74,16 +82,19 @@ app.get('/', (req, res) => {
    Body: { text: string, lang: 'en' | 'id' }
    Returns: { summary: string }
    ================================================== */
-app.post('/api/summarize', async (req, res) => {
-  const { text, lang = 'en' } = req.body;
+app.post("/api/summarize", async (req, res) => {
+  const { text, lang = "en" } = req.body;
 
   if (!text || text.trim().length < 20) {
-    return res.status(400).json({ error: 'Text too short. Please provide at least 20 characters.' });
+    return res.status(400).json({
+      error: "Text too short. Please provide at least 20 characters.",
+    });
   }
 
-  const langInstruction = lang === 'id'
-    ? 'Jawab SELURUHNYA dalam Bahasa Indonesia.'
-    : 'Respond ENTIRELY in English.';
+  const langInstruction =
+    lang === "id"
+      ? "Jawab SELURUHNYA dalam Bahasa Indonesia."
+      : "Respond ENTIRELY in English.";
 
   const prompt = `${langInstruction}
 
@@ -102,8 +113,11 @@ ${text.trim()}
     const summary = result.response.text();
     res.json({ summary });
   } catch (err) {
-    console.error('[summarize] Gemini error:', err.message);
-    res.status(500).json({ error: 'Failed to generate summary. Please check your API key and try again.' });
+    console.error("[summarize] Gemini error:", err.message);
+    res.status(500).json({
+      error:
+        "Failed to generate summary. Please check your API key and try again.",
+    });
   }
 });
 
@@ -112,17 +126,21 @@ ${text.trim()}
    Body: { text: string, lang: 'en' | 'id', count: number }
    Returns: { questions: [ { question, options:[A,B,C,D], answer, explanation } ] }
    ================================================== */
-app.post('/api/quiz', async (req, res) => {
-  const { text, lang = 'en', count = 5 } = req.body;
+app.post("/api/quiz", async (req, res) => {
+  const { text, lang = "en", count = 5 } = req.body;
   const numQuestions = Math.min(Math.max(parseInt(count) || 5, 3), 20);
 
   if (!text || text.trim().length < 50) {
-    return res.status(400).json({ error: 'Text too short. Please provide at least 50 characters for quiz generation.' });
+    return res.status(400).json({
+      error:
+        "Text too short. Please provide at least 50 characters for quiz generation.",
+    });
   }
 
-  const langInstruction = lang === 'id'
-    ? 'Semua pertanyaan, pilihan, dan penjelasan HARUS dalam Bahasa Indonesia.'
-    : 'All questions, options, and explanations MUST be in English.';
+  const langInstruction =
+    lang === "id"
+      ? "Semua pertanyaan, pilihan, dan penjelasan HARUS dalam Bahasa Indonesia."
+      : "All questions, options, and explanations MUST be in English.";
 
   const prompt = `${langInstruction}
 
@@ -156,7 +174,10 @@ ${text.trim()}
     let raw = result.response.text().trim();
 
     // Strip markdown code blocks if present
-    raw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+    raw = raw
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/i, "");
 
     let questions;
     try {
@@ -167,19 +188,21 @@ ${text.trim()}
       if (match) {
         questions = JSON.parse(match[0]);
       } else {
-        throw new Error('Invalid JSON from Gemini: ' + raw.substring(0, 200));
+        throw new Error("Invalid JSON from Gemini: " + raw.substring(0, 200));
       }
     }
 
     // Validate structure
     if (!Array.isArray(questions) || questions.length === 0) {
-      throw new Error('Unexpected response structure from Gemini');
+      throw new Error("Unexpected response structure from Gemini");
     }
 
     res.json({ questions });
   } catch (err) {
-    console.error('[quiz] Error:', err.message);
-    res.status(500).json({ error: 'Failed to generate quiz. Please try again with different text.' });
+    console.error("[quiz] Error:", err.message);
+    res.status(500).json({
+      error: "Failed to generate quiz. Please try again with different text.",
+    });
   }
 });
 
@@ -188,10 +211,16 @@ app.listen(PORT, () => {
   console.log(`\nLUMOS Backend running on http://localhost:${PORT}`);
   console.log(`   Health check: http://localhost:${PORT}/api/health`);
 
-  const hasKey = !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here');
+  const hasKey = !!(
+    process.env.GEMINI_API_KEY &&
+    process.env.GEMINI_API_KEY !== "your_gemini_api_key_here"
+  );
   if (hasKey) {
     console.log(`   Gemini API key configured\n`);
   } else {
-    console.log(`   No Gemini API key found! Edit .env file and set GEMINI_API_KEY\n`);
+    console.log(
+      `   No Gemini API key found! Edit .env file and set GEMINI_API_KEY\n`,
+    );
   }
 });
+module.exports = app;
